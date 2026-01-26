@@ -395,7 +395,7 @@ func formatPrice(value float64) string {
 
 func fetchFearGreed() (FearGreedSnapshot, error) {
 	client := http.Client{Timeout: 15 * time.Second}
-	resp, err := client.Get("https://api.alternative.me/fng/?limit=1")
+	resp, err := client.Get("https://api.coingecko.com/api/v3/global")
 	if err != nil {
 		return FearGreedSnapshot{}, err
 	}
@@ -406,10 +406,9 @@ func fetchFearGreed() (FearGreedSnapshot, error) {
 	}
 
 	var payload struct {
-		Data []struct {
-			Value               string `json:"value"`
-			ValueClassification string `json:"value_classification"`
-			Timestamp           string `json:"timestamp"`
+		Data struct {
+			MarketCapChangePercentage24hUsd float64 `json:"market_cap_change_percentage_24h_usd"`
+			UpdatedAt                       int64   `json:"updated_at"`
 		} `json:"data"`
 	}
 
@@ -417,20 +416,22 @@ func fetchFearGreed() (FearGreedSnapshot, error) {
 		return FearGreedSnapshot{}, err
 	}
 
-	if len(payload.Data) == 0 {
-		return FearGreedSnapshot{}, fmt.Errorf("no fear & greed data")
+	category := "Neutral"
+	if payload.Data.MarketCapChangePercentage24hUsd >= 1 {
+		category = "Greed"
+	} else if payload.Data.MarketCapChangePercentage24hUsd <= -1 {
+		category = "Fear"
 	}
 
-	entry := payload.Data[0]
-	stamp, err := strconv.ParseInt(entry.Timestamp, 10, 64)
-	if err != nil {
-		return FearGreedSnapshot{Value: entry.Value, Category: entry.ValueClassification, UpdatedAt: ""}, nil
+	updatedAt := ""
+	if payload.Data.UpdatedAt > 0 {
+		updatedAt = time.Unix(payload.Data.UpdatedAt, 0).UTC().Format("2006-01-02")
 	}
 
 	return FearGreedSnapshot{
-		Value:     entry.Value,
-		Category:  entry.ValueClassification,
-		UpdatedAt: time.Unix(stamp, 0).UTC().Format("2006-01-02"),
+		Value:     fmt.Sprintf("%.2f%%", payload.Data.MarketCapChangePercentage24hUsd),
+		Category:  category,
+		UpdatedAt: updatedAt,
 	}, nil
 }
 
@@ -587,10 +588,10 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
         </div>
       </section>
       <section>
-        <div class="section-title">Fear &amp; Greed</div>
+        <div class="section-title">CoinGecko Market Pulse</div>
         <div class="grid">
           <article class="card fear-card">
-            <div class="symbol">Market Sentiment</div>
+            <div class="symbol">24h Market Cap Change</div>
             <div class="fear-value">{{.FearGreed.Value}}</div>
             <div class="fear-label">{{.FearGreed.Category}}</div>
             {{if .FearGreed.UpdatedAt}}
@@ -613,7 +614,7 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
         </div>
       </section>
       <footer>
-        <p>Data sources: CoinGecko, Stooq, alternative.me</p>
+        <p>Data sources: CoinGecko, Stooq</p>
         <p>All rights reserved {{.Year}}</p>
       </footer>
     </main>
