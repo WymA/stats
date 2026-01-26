@@ -20,6 +20,7 @@ const (
 	outputFile = "index.html"
 	cryptoURL  = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum"
 	historyDir = "history"
+	googleTag  = "<!-- Google tag (gtag.js) -->\n\t<script async src=\"https://www.googletagmanager.com/gtag/js?id=G-JNZQWSY5VP\"></script>\n\t<script>\n\twindow.dataLayer = window.dataLayer || [];\n\tfunction gtag(){dataLayer.push(arguments);}\n\tgtag('js', new Date());\n\n\tgtag('config', 'G-JNZQWSY5VP');\n\t</script>"
 )
 
 type Coin struct {
@@ -39,6 +40,7 @@ type PageData struct {
 	Stocks      []StockSnapshot
 	History     []HistoryEntry
 	AssetPath   string
+	GoogleTag   template.HTML
 }
 
 type IndexSnapshot struct {
@@ -168,6 +170,7 @@ func main() {
 		Stocks:      stocks,
 		History:     indexHistoryEntries,
 		AssetPath:   "assets",
+		GoogleTag:   template.HTML(googleTag),
 	}
 
 	historyData := indexData
@@ -503,8 +506,11 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Daily market dashboard from Wym with S&P 500, Nasdaq 100, Tesla, Alphabet, NVIDIA, Occidental Petroleum, Coca-Cola, PDD Holdings, SPDR Gold Shares, JPY/USD, Bitcoin, Ethereum, and MACD Bullish signals." />
+    <meta name="keywords" content="Wym, daily investment snapshot, market dashboard, S&P 500, Nasdaq 100, Tesla, Alphabet, NVIDIA, Occidental Petroleum, Coca-Cola, PDD Holdings, SPDR Gold Shares, JPY/USD, Bitcoin, Ethereum, MACD Bullish" />
     <link rel="icon" href="{{.AssetPath}}/favicon.ico" />
     <title>Daily Investment Snapshot</title>
+    {{.GoogleTag}}
     <link rel="stylesheet" href="{{.AssetPath}}/style.css" />
   </head>
   <body>
