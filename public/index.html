@@ -12,6 +12,22 @@
         --accent-soft: #dbeafe;
         --surface: #f8fafc;
         --card: #ffffff;
+        --bullish: #16a34a;
+        --bullish-soft: #dcfce7;
+        --shadow: rgba(15, 23, 42, 0.3);
+        --border: rgba(148, 163, 184, 0.2);
+      }
+      body.dark {
+        --ink: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #38bdf8;
+        --accent-soft: rgba(56, 189, 248, 0.2);
+        --surface: #0b1120;
+        --card: #0f172a;
+        --bullish: #4ade80;
+        --bullish-soft: rgba(74, 222, 128, 0.16);
+        --shadow: rgba(15, 23, 42, 0.6);
+        --border: rgba(148, 163, 184, 0.18);
       }
       * { box-sizing: border-box; }
       body {
@@ -19,10 +35,64 @@
         font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
         color: var(--ink);
         background: radial-gradient(circle at top, #eff6ff, #ffffff 55%);
+        transition: background 0.4s ease, color 0.3s ease;
+      }
+      body.dark {
+        background: radial-gradient(circle at top, #172554, #0b1120 60%);
       }
       header {
         padding: 48px 24px 24px;
         text-align: center;
+        position: relative;
+      }
+      .toolbar {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .toolbar button,
+      .toolbar summary {
+        font: inherit;
+        cursor: pointer;
+        background: var(--card);
+        color: var(--ink);
+        border: 1px solid var(--border);
+        padding: 8px 12px;
+        border-radius: 999px;
+        box-shadow: 0 10px 30px -24px var(--shadow);
+        list-style: none;
+      }
+      .toolbar details[open] summary {
+        border-color: var(--accent);
+      }
+      .history-menu {
+        position: relative;
+      }
+      .history-list {
+        position: absolute;
+        right: 0;
+        margin-top: 10px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px;
+        min-width: 220px;
+        max-height: 260px;
+        overflow: auto;
+        box-shadow: 0 20px 40px -30px var(--shadow);
+      }
+      .history-list a {
+        display: block;
+        padding: 6px 8px;
+        color: var(--ink);
+        text-decoration: none;
+        border-radius: 8px;
+      }
+      .history-list a:hover {
+        background: var(--accent-soft);
       }
       header h1 {
         margin: 0 0 8px;
@@ -56,8 +126,12 @@
         background: var(--card);
         border-radius: 16px;
         padding: 20px;
-        box-shadow: 0 20px 40px -30px rgba(15, 23, 42, 0.3);
-        border: 1px solid rgba(148, 163, 184, 0.2);
+        box-shadow: 0 20px 40px -30px var(--shadow);
+        border: 1px solid var(--border);
+      }
+      .card.bullish {
+        border-color: var(--bullish);
+        box-shadow: 0 24px 50px -30px rgba(22, 163, 74, 0.45);
       }
       .card h2 {
         margin: 0 0 4px;
@@ -85,6 +159,21 @@
         border-radius: 999px;
         display: inline-block;
         background: var(--accent-soft);
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+      }
+      .badge.bullish {
+        background: var(--bullish-soft);
+        color: var(--bullish);
       }
       .fear-card {
         text-align: center;
@@ -116,8 +205,19 @@
   </head>
   <body>
     <header>
+      <div class="toolbar">
+        <details class="history-menu">
+          <summary>History</summary>
+          <div class="history-list">
+            
+            <a href="history/20260126.html">2026-01-26</a>
+            
+          </div>
+        </details>
+        <button id="theme-toggle" type="button">Dark mode</button>
+      </div>
       <h1>Daily Investment Snapshot</h1>
-      <p>Generated 2026-01-26 14:30 CST</p>
+      <p>Generated 2026-01-26 15:05 CST</p>
     </header>
     <main>
       <section>
@@ -146,10 +246,11 @@
         <div class="section-title">Stocks &amp; Macro</div>
         <div class="grid">
           
-          <article class="card">
+          <article class="card ">
             <div class="symbol">tsla.us</div>
             <h2>Tesla</h2>
             <div class="price">$449.06</div>
+            
             <div class="stock-metrics">
               <span>MACD -3.39</span>
               <span>Signal -3.02</span>
@@ -157,10 +258,11 @@
             </div>
           </article>
           
-          <article class="card">
+          <article class="card ">
             <div class="symbol">goog.us</div>
             <h2>Alphabet</h2>
             <div class="price">$328.43</div>
+            
             <div class="stock-metrics">
               <span>MACD 5.59</span>
               <span>Signal 6.12</span>
@@ -168,10 +270,11 @@
             </div>
           </article>
           
-          <article class="card">
+          <article class="card ">
             <div class="symbol">nvda.us</div>
             <h2>NVIDIA</h2>
             <div class="price">$187.67</div>
+            
             <div class="stock-metrics">
               <span>MACD 0.14</span>
               <span>Signal 0.28</span>
@@ -179,10 +282,11 @@
             </div>
           </article>
           
-          <article class="card">
+          <article class="card ">
             <div class="symbol">gld.us</div>
             <h2>SPDR Gold Shares</h2>
             <div class="price">$458.00</div>
+            
             <div class="stock-metrics">
               <span>MACD 13.70</span>
               <span>Signal 10.09</span>
@@ -190,14 +294,15 @@
             </div>
           </article>
           
-          <article class="card">
-            <div class="symbol">10y.us</div>
-            <h2>US 10Y Yield</h2>
-            <div class="price">$4.26</div>
+          <article class="card ">
+            <div class="symbol">jpyusd</div>
+            <h2>JPY/USD</h2>
+            <div class="price">$0.00648</div>
+            
             <div class="stock-metrics">
-              <span>MACD 0.03</span>
-              <span>Signal 0.02</span>
-              <span>Hist 0.01</span>
+              <span>MACD -0.00</span>
+              <span>Signal -0.00</span>
+              <span>Hist 0.00</span>
             </div>
           </article>
           
@@ -223,22 +328,37 @@
           <article class="card">
             <div class="symbol">btc</div>
             <h2>Bitcoin</h2>
-            <div class="price">$87811.00</div>
-            <div class="change">24h -0.98%</div>
+            <div class="price">$87794.00</div>
+            <div class="change">24h -0.96%</div>
           </article>
           
           <article class="card">
             <div class="symbol">eth</div>
             <h2>Ethereum</h2>
-            <div class="price">$2877.75</div>
-            <div class="change">24h -1.95%</div>
+            <div class="price">$2889.42</div>
+            <div class="change">24h -1.68%</div>
           </article>
           
         </div>
       </section>
       <footer>
-        <p>Data sources: CoinGecko, Stooq, alternative.me, FRED</p>
+        <p>Data sources: CoinGecko, Stooq, alternative.me</p>
       </footer>
     </main>
+    <script>
+      const toggle = document.getElementById('theme-toggle');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const stored = localStorage.getItem('theme');
+      const initial = stored || (prefersDark ? 'dark' : 'light');
+      if (initial === 'dark') {
+        document.body.classList.add('dark');
+        toggle.textContent = 'Light mode';
+      }
+      toggle.addEventListener('click', () => {
+        const isDark = document.body.classList.toggle('dark');
+        toggle.textContent = isDark ? 'Light mode' : 'Dark mode';
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      });
+    </script>
   </body>
 </html>

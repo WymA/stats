@@ -86,6 +86,9 @@ func main() {
 		{Name: "Tesla", Symbol: "tsla.us"},
 		{Name: "Alphabet", Symbol: "goog.us"},
 		{Name: "NVIDIA", Symbol: "nvda.us"},
+		{Name: "Occidental Petroleum", Symbol: "oxy.us"},
+		{Name: "Coca-Cola", Symbol: "ko.us"},
+		{Name: "PDD Holdings", Symbol: "pdd.us"},
 		{Name: "SPDR Gold Shares", Symbol: "gld.us"},
 		{Name: "JPY/USD", Symbol: "jpyusd"},
 	}
