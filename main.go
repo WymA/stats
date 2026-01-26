@@ -509,8 +509,9 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
     <meta name="description" content="Daily market dashboard from Wym with S&P 500, Nasdaq 100, Tesla, Alphabet, NVIDIA, Occidental Petroleum, Coca-Cola, PDD Holdings, SPDR Gold Shares, JPY/USD, Bitcoin, Ethereum, and MACD Bullish signals." />
     <meta name="keywords" content="Wym, daily investment snapshot, market dashboard, S&P 500, Nasdaq 100, Tesla, Alphabet, NVIDIA, Occidental Petroleum, Coca-Cola, PDD Holdings, SPDR Gold Shares, JPY/USD, Bitcoin, Ethereum, MACD Bullish" />
     <link rel="icon" href="{{.AssetPath}}/favicon.ico" />
-    <title>Daily Investment Snapshot</title>
+    <title>Wym Stats</title>
     {{.GoogleTag}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="{{.AssetPath}}/style.css" />
   </head>
   <body>
@@ -524,10 +525,7 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
         </a>
         <details class="history-menu">
           <summary class="icon-button" aria-label="History">
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M12 4a8 8 0 1 1-7.4 5H3.5a.5.5 0 0 1 0-1h3a.5.5 0 0 1 .5.5v3a.5.5 0 1 1-1 0V9.6A7 7 0 1 0 12 5a.5.5 0 0 1 0-1z" fill="currentColor" />
-              <path d="M12 7a.5.5 0 0 1 .5.5v4.1l2.6 1.5a.5.5 0 0 1-.5.86l-2.85-1.65A.5.5 0 0 1 11.5 12V7.5A.5.5 0 0 1 12 7z" fill="currentColor" />
-            </svg>
+            <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
             <span class="sr-only">History</span>
           </summary>
           <div class="history-list">
@@ -537,13 +535,11 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
           </div>
         </details>
         <button id="theme-toggle" class="icon-button" type="button" aria-label="Toggle theme">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M12 3a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 12 3zm0 14.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zm8.25-4.75a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5a.75.75 0 0 1 .75-.75zM6 12.75a.75.75 0 0 1-.75.75H3.75a.75.75 0 0 1 0-1.5h1.5a.75.75 0 0 1 .75.75zm14.06-6.56a.75.75 0 0 1 0 1.06l-1.06 1.06a.75.75 0 0 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0zM6.06 16.69a.75.75 0 0 1 0 1.06l-1.06 1.06a.75.75 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0zm13.0 1.06a.75.75 0 0 1-1.06 0l-1.06-1.06a.75.75 0 0 1 1.06-1.06l1.06 1.06a.75.75 0 0 1 0 1.06zM6.06 7.31a.75.75 0 0 1-1.06 0L3.94 6.25a.75.75 0 1 1 1.06-1.06l1.06 1.06a.75.75 0 0 1 0 1.06z" fill="currentColor" />
-          </svg>
+          <i class="fa-regular fa-moon" aria-hidden="true"></i>
           <span class="sr-only">Theme</span>
         </button>
       </div>
-      <h1>Daily Investment Snapshot</h1>
+      <h1>Wym Stats</h1>
       <p>Generated {{.GeneratedAt}}</p>
     </header>
     <main>

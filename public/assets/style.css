@@ -92,6 +92,9 @@ header {
   width: 20px;
   height: 20px;
 }
+.icon-button i {
+  font-size: 18px;
+}
 .icon-button:hover {
   border-color: var(--accent);
   color: var(--accent);
