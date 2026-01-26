@@ -515,17 +515,33 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
   </head>
   <body>
     <header>
-      <a class="home-link" href="https://stats.matthias2wym.com/">Home</a>
       <div class="toolbar">
+        <a class="icon-button" href="https://stats.matthias2wym.com/" aria-label="Home">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M3 10.5 12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5H15v-6h-6v6H4.5A1.5 1.5 0 0 1 3 19.5v-9z" fill="currentColor" />
+          </svg>
+          <span class="sr-only">Home</span>
+        </a>
         <details class="history-menu">
-          <summary>History</summary>
+          <summary class="icon-button" aria-label="History">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M12 4a8 8 0 1 1-7.4 5H3.5a.5.5 0 0 1 0-1h3a.5.5 0 0 1 .5.5v3a.5.5 0 1 1-1 0V9.6A7 7 0 1 0 12 5a.5.5 0 0 1 0-1z" fill="currentColor" />
+              <path d="M12 7a.5.5 0 0 1 .5.5v4.1l2.6 1.5a.5.5 0 0 1-.5.86l-2.85-1.65A.5.5 0 0 1 11.5 12V7.5A.5.5 0 0 1 12 7z" fill="currentColor" />
+            </svg>
+            <span class="sr-only">History</span>
+          </summary>
           <div class="history-list">
             {{range .History}}
             <a href="{{.File}}">{{.Date}}</a>
             {{end}}
           </div>
         </details>
-        <button id="theme-toggle" type="button">Dark mode</button>
+        <button id="theme-toggle" class="icon-button" type="button" aria-label="Toggle theme">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 3a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 12 3zm0 14.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zm8.25-4.75a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5a.75.75 0 0 1 .75-.75zM6 12.75a.75.75 0 0 1-.75.75H3.75a.75.75 0 0 1 0-1.5h1.5a.75.75 0 0 1 .75.75zm14.06-6.56a.75.75 0 0 1 0 1.06l-1.06 1.06a.75.75 0 0 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0zM6.06 16.69a.75.75 0 0 1 0 1.06l-1.06 1.06a.75.75 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0zm13.0 1.06a.75.75 0 0 1-1.06 0l-1.06-1.06a.75.75 0 0 1 1.06-1.06l1.06 1.06a.75.75 0 0 1 0 1.06zM6.06 7.31a.75.75 0 0 1-1.06 0L3.94 6.25a.75.75 0 1 1 1.06-1.06l1.06 1.06a.75.75 0 0 1 0 1.06z" fill="currentColor" />
+          </svg>
+          <span class="sr-only">Theme</span>
+        </button>
       </div>
       <h1>Daily Investment Snapshot</h1>
       <p>Generated {{.GeneratedAt}}</p>
