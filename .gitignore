@@ -1,0 +1,8 @@
+/.env
+/.env.*
+/.DS_Store
+/node_modules/
+/bin/
+/dist/
+/coverage/
+/public/history/

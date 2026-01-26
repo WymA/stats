@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Daily Investment Snapshot</title>
+    <style>
+      :root {
+        --ink: #111827;
+        --muted: #6b7280;
+        --accent: #2563eb;
+        --accent-soft: #dbeafe;
+        --surface: #f8fafc;
+        --card: #ffffff;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        color: var(--ink);
+        background: radial-gradient(circle at top, #eff6ff, #ffffff 55%);
+      }
+      header {
+        padding: 48px 24px 24px;
+        text-align: center;
+      }
+      header h1 {
+        margin: 0 0 8px;
+        font-size: 2.2rem;
+      }
+      header p {
+        margin: 0;
+        color: var(--muted);
+      }
+      main {
+        max-width: 1080px;
+        margin: 0 auto 48px;
+        padding: 0 24px 32px;
+      }
+      section {
+        margin-bottom: 32px;
+      }
+      .section-title {
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--muted);
+        margin-bottom: 16px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+      }
+      .card {
+        background: var(--card);
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 20px 40px -30px rgba(15, 23, 42, 0.3);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+      }
+      .card h2 {
+        margin: 0 0 4px;
+        font-size: 1.2rem;
+      }
+      .metric {
+        font-size: 0.95rem;
+        color: var(--muted);
+        margin: 8px 0;
+      }
+      .symbol {
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        color: var(--muted);
+        letter-spacing: 0.08em;
+      }
+      .price {
+        margin: 16px 0 8px;
+        font-size: 1.7rem;
+        color: var(--accent);
+      }
+      .change {
+        font-weight: 600;
+        padding: 6px 10px;
+        border-radius: 999px;
+        display: inline-block;
+        background: var(--accent-soft);
+      }
+      .fear-card {
+        text-align: center;
+      }
+      .fear-value {
+        font-size: 2.2rem;
+        margin: 12px 0 4px;
+        color: var(--accent);
+      }
+      .fear-label {
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .stock-metrics {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+      footer {
+        margin-top: 32px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Daily Investment Snapshot</h1>
+      <p>Generated 2026-01-26 14:30 CST</p>
+    </header>
+    <main>
+      <section>
+        <div class="section-title">US Indices</div>
+        <div class="grid">
+          
+          <article class="card">
+            <div class="symbol">^SPX</div>
+            <h2>S&amp;P 500</h2>
+            <div class="price">$6915.61</div>
+            <div class="metric">MA20: $6913.85</div>
+            <div class="metric">EMA20: $6899.58</div>
+          </article>
+          
+          <article class="card">
+            <div class="symbol">^NDX</div>
+            <h2>Nasdaq 100</h2>
+            <div class="price">$25605.47</div>
+            <div class="metric">MA20: $25511.14</div>
+            <div class="metric">EMA20: $25469.93</div>
+          </article>
+          
+        </div>
+      </section>
+      <section>
+        <div class="section-title">Stocks &amp; Macro</div>
+        <div class="grid">
+          
+          <article class="card">
+            <div class="symbol">tsla.us</div>
+            <h2>Tesla</h2>
+            <div class="price">$449.06</div>
+            <div class="stock-metrics">
+              <span>MACD -3.39</span>
+              <span>Signal -3.02</span>
+              <span>Hist -0.37</span>
+            </div>
+          </article>
+          
+          <article class="card">
+            <div class="symbol">goog.us</div>
+            <h2>Alphabet</h2>
+            <div class="price">$328.43</div>
+            <div class="stock-metrics">
+              <span>MACD 5.59</span>
+              <span>Signal 6.12</span>
+              <span>Hist -0.53</span>
+            </div>
+          </article>
+          
+          <article class="card">
+            <div class="symbol">nvda.us</div>
+            <h2>NVIDIA</h2>
+            <div class="price">$187.67</div>
+            <div class="stock-metrics">
+              <span>MACD 0.14</span>
+              <span>Signal 0.28</span>
+              <span>Hist -0.13</span>
+            </div>
+          </article>
+          
+          <article class="card">
+            <div class="symbol">gld.us</div>
+            <h2>SPDR Gold Shares</h2>
+            <div class="price">$458.00</div>
+            <div class="stock-metrics">
+              <span>MACD 13.70</span>
+              <span>Signal 10.09</span>
+              <span>Hist 3.61</span>
+            </div>
+          </article>
+          
+          <article class="card">
+            <div class="symbol">10y.us</div>
+            <h2>US 10Y Yield</h2>
+            <div class="price">$4.26</div>
+            <div class="stock-metrics">
+              <span>MACD 0.03</span>
+              <span>Signal 0.02</span>
+              <span>Hist 0.01</span>
+            </div>
+          </article>
+          
+        </div>
+      </section>
+      <section>
+        <div class="section-title">Fear &amp; Greed</div>
+        <div class="grid">
+          <article class="card fear-card">
+            <div class="symbol">Market Sentiment</div>
+            <div class="fear-value">20</div>
+            <div class="fear-label">Extreme Fear</div>
+            
+            <div class="metric">Updated 2026-01-26</div>
+            
+          </article>
+        </div>
+      </section>
+      <section>
+        <div class="section-title">Crypto Snapshot</div>
+        <div class="grid">
+          
+          <article class="card">
+            <div class="symbol">btc</div>
+            <h2>Bitcoin</h2>
+            <div class="price">$87811.00</div>
+            <div class="change">24h -0.98%</div>
+          </article>
+          
+          <article class="card">
+            <div class="symbol">eth</div>
+            <h2>Ethereum</h2>
+            <div class="price">$2877.75</div>
+            <div class="change">24h -1.95%</div>
+          </article>
+          
+        </div>
+      </section>
+      <footer>
+        <p>Data sources: CoinGecko, Stooq, alternative.me, FRED</p>
+      </footer>
+    </main>
+  </body>
+</html>
