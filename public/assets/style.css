@@ -52,6 +52,11 @@ header {
   align-items: center;
   justify-content: space-between;
 }
+.toolbar-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
 .toolbar details[open] summary {
   border-color: var(--accent);
 }
@@ -237,7 +242,10 @@ footer {
     padding-top: 72px;
   }
   .toolbar {
-    justify-content: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .toolbar-actions {
     gap: 10px;
   }
   .icon-button {

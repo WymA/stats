@@ -523,21 +523,23 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
           </svg>
           <span class="sr-only">Home</span>
         </a>
-        <details class="history-menu">
-          <summary class="icon-button" aria-label="History">
-            <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
-            <span class="sr-only">History</span>
-          </summary>
-          <div class="history-list">
-            {{range .History}}
-            <a href="{{.File}}">{{.Date}}</a>
-            {{end}}
-          </div>
-        </details>
-        <button id="theme-toggle" class="icon-button" type="button" aria-label="Toggle theme">
-          <i class="fa-regular fa-moon" aria-hidden="true"></i>
-          <span class="sr-only">Theme</span>
-        </button>
+        <div class="toolbar-actions">
+          <details class="history-menu">
+            <summary class="icon-button" aria-label="History">
+              <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+              <span class="sr-only">History</span>
+            </summary>
+            <div class="history-list">
+              {{range .History}}
+              <a href="{{.File}}">{{.Date}}</a>
+              {{end}}
+            </div>
+          </details>
+          <button id="theme-toggle" class="icon-button" type="button" aria-label="Toggle theme">
+            <i class="fa-regular fa-moon" aria-hidden="true"></i>
+            <span class="sr-only">Theme</span>
+          </button>
+        </div>
       </div>
       <h1>Wym Stats</h1>
       <p>Generated {{.GeneratedAt}}</p>
