@@ -509,6 +509,7 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
   </head>
   <body>
     <header>
+      <a class="home-link" href="https://stats.matthias2wym.com/">Home</a>
       <div class="toolbar">
         <details class="history-menu">
           <summary>History</summary>
