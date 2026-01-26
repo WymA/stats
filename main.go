@@ -41,6 +41,7 @@ type PageData struct {
 	History     []HistoryEntry
 	AssetPath   string
 	GoogleTag   template.HTML
+	Year        int
 }
 
 type IndexSnapshot struct {
@@ -171,6 +172,7 @@ func main() {
 		History:     indexHistoryEntries,
 		AssetPath:   "assets",
 		GoogleTag:   template.HTML(googleTag),
+		Year:        time.Now().Year(),
 	}
 
 	historyData := indexData
@@ -612,6 +614,7 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
       </section>
       <footer>
         <p>Data sources: CoinGecko, Stooq, alternative.me</p>
+        <p>All rights reserved {{.Year}}</p>
       </footer>
     </main>
     <script src="{{.AssetPath}}/app.js"></script>
