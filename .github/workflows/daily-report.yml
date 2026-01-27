@@ -21,6 +21,8 @@ jobs:
           go-version: "1.22"
 
       - name: Generate report
+        env:
+          COINMARKETCAP_API_KEY: ${{ secrets.COINMARKETCAP_API_KEY }}
         run: go run .
 
       - uses: EndBug/add-and-commit@v9
