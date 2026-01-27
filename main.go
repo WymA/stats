@@ -394,8 +394,20 @@ func formatPrice(value float64) string {
 }
 
 func fetchFearGreed() (FearGreedSnapshot, error) {
+	apiKey := strings.TrimSpace(os.Getenv("COINMARKETCAP_API_KEY"))
+	if apiKey == "" {
+		return FearGreedSnapshot{}, fmt.Errorf("missing COINMARKETCAP_API_KEY")
+	}
+
 	client := http.Client{Timeout: 15 * time.Second}
-	resp, err := client.Get("https://api.coingecko.com/api/v3/global")
+	request, err := http.NewRequest("GET", "https://pro-api.coinmarketcap.com/v3/fear-and-greed/historical?limit=1", nil)
+	if err != nil {
+		return FearGreedSnapshot{}, err
+	}
+	request.Header.Set("Accept", "application/json")
+	request.Header.Set("X-CMC_PRO_API_KEY", apiKey)
+
+	resp, err := client.Do(request)
 	if err != nil {
 		return FearGreedSnapshot{}, err
 	}
@@ -406,31 +418,36 @@ func fetchFearGreed() (FearGreedSnapshot, error) {
 	}
 
 	var payload struct {
-		Data struct {
-			MarketCapChangePercentage24hUsd float64 `json:"market_cap_change_percentage_24h_usd"`
-			UpdatedAt                       int64   `json:"updated_at"`
+		Data []struct {
+			Value               json.Number `json:"value"`
+			ValueClassification string      `json:"value_classification"`
+			Timestamp           string      `json:"timestamp"`
 		} `json:"data"`
 	}
 
-	if err := json.NewDecoder(resp.Body).Decode(&payload); err != nil {
+	decoder := json.NewDecoder(resp.Body)
+	decoder.UseNumber()
+	if err := decoder.Decode(&payload); err != nil {
 		return FearGreedSnapshot{}, err
 	}
 
-	category := "Neutral"
-	if payload.Data.MarketCapChangePercentage24hUsd >= 1 {
-		category = "Greed"
-	} else if payload.Data.MarketCapChangePercentage24hUsd <= -1 {
-		category = "Fear"
+	if len(payload.Data) == 0 {
+		return FearGreedSnapshot{}, fmt.Errorf("no fear & greed data")
 	}
 
+	entry := payload.Data[0]
 	updatedAt := ""
-	if payload.Data.UpdatedAt > 0 {
-		updatedAt = time.Unix(payload.Data.UpdatedAt, 0).UTC().Format("2006-01-02")
+	if entry.Timestamp != "" {
+		if parsed, err := time.Parse(time.RFC3339, entry.Timestamp); err == nil {
+			updatedAt = parsed.UTC().Format("2006-01-02")
+		} else if parsed, err := time.Parse(time.RFC3339Nano, entry.Timestamp); err == nil {
+			updatedAt = parsed.UTC().Format("2006-01-02")
+		}
 	}
 
 	return FearGreedSnapshot{
-		Value:     fmt.Sprintf("%.2f%%", payload.Data.MarketCapChangePercentage24hUsd),
-		Category:  category,
+		Value:     entry.Value.String(),
+		Category:  entry.ValueClassification,
 		UpdatedAt: updatedAt,
 	}, nil
 }
@@ -588,10 +605,10 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
         </div>
       </section>
       <section>
-        <div class="section-title">CoinGecko Market Pulse</div>
+        <div class="section-title">Fear &amp; Greed Index</div>
         <div class="grid">
           <article class="card fear-card">
-            <div class="symbol">24h Market Cap Change</div>
+            <div class="symbol">Market Sentiment</div>
             <div class="fear-value">{{.FearGreed.Value}}</div>
             <div class="fear-label">{{.FearGreed.Category}}</div>
             {{if .FearGreed.UpdatedAt}}
@@ -614,7 +631,7 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
         </div>
       </section>
       <footer>
-        <p>Data sources: CoinGecko, Stooq</p>
+        <p>Data sources: CoinGecko, Stooq, CoinMarketCap</p>
         <p>All rights reserved {{.Year}}</p>
       </footer>
     </main>
