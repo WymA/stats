@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/csv"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"html/template"
 	"io"
@@ -24,6 +25,8 @@ const (
 	historyDir = "history"
 	googleTag  = "<!-- Google tag (gtag.js) -->\n\t<script async src=\"https://www.googletagmanager.com/gtag/js?id=G-JNZQWSY5VP\"></script>\n\t<script>\n\twindow.dataLayer = window.dataLayer || [];\n\tfunction gtag(){dataLayer.push(arguments);}\n\tgtag('js', new Date());\n\n\tgtag('config', 'G-JNZQWSY5VP');\n\t</script>"
 )
+
+var errTickerNotFound = fmt.Errorf("ticker not found")
 
 type Coin struct {
 	ID                       string  `json:"id"`
@@ -71,6 +74,7 @@ type FearGreedSnapshot struct {
 type StockSnapshot struct {
 	Name       string
 	Symbol     string
+	HasData    bool
 	Close      float64
 	MACD       float64
 	Signal     float64
@@ -138,13 +142,13 @@ func main() {
 	for i, stock := range stocks {
 		snapshot, err := fetchStockSnapshot(stock)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "fetch stock %s: %v\n", stock.Name, err)
-			os.Exit(1)
+			stocks[i].HasData = false
+			continue
 		}
 		stocks[i] = snapshot
 	}
 
-	tickers, err := loadSP500Tickers(http.Client{Timeout: 15 * time.Second})
+	tickers, err := loadSP500Tickers(http.Client{Timeout: 60 * time.Second})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "load S&P 500 tickers: %v\n", err)
 		os.Exit(1)
@@ -152,7 +156,7 @@ func main() {
 	stockSignals, err := scanTrendRiderSignals(tickers)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "scan signals: %v\n", err)
-		os.Exit(1)
+		stockSignals = nil
 	}
 	if len(stockSignals) > 0 {
 		enriched, err := fetchAdditionalSnapshots(stocks, stockSignals)
@@ -249,13 +253,16 @@ func main() {
 }
 
 func fetchCoins() ([]Coin, error) {
-	client := http.Client{Timeout: 15 * time.Second}
+	client := http.Client{Timeout: 60 * time.Second}
 	resp, err := client.Get(cryptoURL)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, errTickerNotFound
+	}
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return nil, fmt.Errorf("unexpected status: %s", resp.Status)
 	}
@@ -322,13 +329,14 @@ func fetchStockSnapshot(stock StockSnapshot) (StockSnapshot, error) {
 	stock.EMA50 = ema50
 	stock.EMABullish = ema20 > ema50
 	stock.ChangePct = dailyChangePct(prices)
+	stock.HasData = true
 
 	return stock, nil
 }
 
 func fetchStooqHistory(symbol string) ([]float64, error) {
 	url := fmt.Sprintf("https://stooq.com/q/d/l/?s=%s&i=d", symbol)
-	client := http.Client{Timeout: 15 * time.Second}
+	client := http.Client{Timeout: 60 * time.Second}
 	resp, err := client.Get(url)
 	if err != nil {
 		return nil, err
@@ -374,14 +382,14 @@ func fetchStooqHistory(symbol string) ([]float64, error) {
 }
 
 func scanTrendRiderSignals(tickers []string) ([]StockSignal, error) {
-	client := http.Client{Timeout: 15 * time.Second}
+	client := http.Client{Timeout: 60 * time.Second}
 	workerLimit := 4
 	if len(tickers) < workerLimit {
 		workerLimit = len(tickers)
 	}
 	semaphore := make(chan struct{}, workerLimit)
 	results := make(chan StockSignal, len(tickers))
-	errors := make(chan error, len(tickers))
+	resultErrors := make(chan error, len(tickers))
 	var waitGroup sync.WaitGroup
 
 	for _, ticker := range tickers {
@@ -397,7 +405,10 @@ func scanTrendRiderSignals(tickers []string) ([]StockSignal, error) {
 
 			signal, ok, err := fetchTrendRiderSignal(client, symbol)
 			if err != nil {
-				errors <- fmt.Errorf("%s: %w", symbol, err)
+				if errors.Is(err, errTickerNotFound) {
+					return
+				}
+				resultErrors <- fmt.Errorf("%s: %w", symbol, err)
 				return
 			}
 			if ok {
@@ -408,10 +419,10 @@ func scanTrendRiderSignals(tickers []string) ([]StockSignal, error) {
 
 	waitGroup.Wait()
 	close(results)
-	close(errors)
+	close(resultErrors)
 
-	if len(errors) > 0 {
-		return nil, <-errors
+	if len(resultErrors) > 0 {
+		return nil, <-resultErrors
 	}
 
 	var signals []StockSignal
@@ -761,7 +772,7 @@ func fetchFearGreed() (FearGreedSnapshot, error) {
 		return FearGreedSnapshot{}, fmt.Errorf("missing COINMARKETCAP_API_KEY")
 	}
 
-	client := http.Client{Timeout: 15 * time.Second}
+	client := http.Client{Timeout: 60 * time.Second}
 	request, err := http.NewRequest("GET", "https://pro-api.coinmarketcap.com/v3/fear-and-greed/historical?limit=1", nil)
 	if err != nil {
 		return FearGreedSnapshot{}, err
@@ -950,6 +961,7 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
           <article class="card">
             <div class="symbol">{{.Symbol}}</div>
             <h2>{{.Name}}</h2>
+            {{if .HasData}}
             <div class="price">${{formatPrice .Close}}</div>
             <div class="change">Last {{printf "%.2f" .ChangePct}}%</div>
             <div class="badge {{if .EMABullish}}bullish{{else}}bearish{{end}}">EMA20 {{if .EMABullish}}Above{{else}}Below{{end}} EMA50</div>
@@ -959,6 +971,10 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
               <span>MACD {{printf "%.2f" .MACD}}</span>
               <span>Signal {{printf "%.2f" .Signal}}</span>
             </div>
+            {{else}}
+            <div class="price">N/A</div>
+            <div class="metric">No price data available.</div>
+            {{end}}
           </article>
           {{end}}
         </div>
