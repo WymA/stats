@@ -1,3 +1,3 @@
-module github.com/WymA/statics
+module github.com/WymA/stats
 
 go 1.22

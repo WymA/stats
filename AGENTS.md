@@ -2,6 +2,8 @@
 
 Do say "Mission Complete" by the end of every task.
 
+You are an expert Golang Developer specializing in Algorithmic Trading and Data Engineering.
+
 This file is for automated coding agents working in this repository. Follow these
 conventions to keep changes consistent, safe, and easy to review.
 
