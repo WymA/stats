@@ -39,14 +39,17 @@ type Coin struct {
 	EMA50                    float64
 	EMABullish               bool
 	ChangePct                float64
+	MACD                     float64
+	Signal                   float64
+	HasIndicators            bool
 }
 
 type PageData struct {
 	GeneratedAt    string
-	Coins          []Coin
 	Indices        []IndexSnapshot
 	FearGreed      FearGreedSnapshot
-	Stocks         []StockSnapshot
+	Predefined     []PredefinedItem
+	MacroGold      StockSnapshot
 	Signals        []StockSignal
 	SignalsScanned int
 	History        []HistoryEntry
@@ -82,6 +85,20 @@ type StockSnapshot struct {
 	EMA50      float64
 	EMABullish bool
 	ChangePct  float64
+}
+
+type PredefinedItem struct {
+	Name          string
+	Symbol        string
+	HasData       bool
+	HasIndicators bool
+	Close         float64
+	ChangePct     float64
+	EMA20         float64
+	EMA50         float64
+	EMABullish    bool
+	MACD          float64
+	Signal        float64
 }
 
 type StockSignal struct {
@@ -125,10 +142,9 @@ func main() {
 		{Name: "Occidental Petroleum", Symbol: "oxy.us"},
 		{Name: "Coca-Cola", Symbol: "ko.us"},
 		{Name: "PDD Holdings", Symbol: "pdd.us"},
-		{Name: "Gold/USD", Symbol: "xauusd"},
 		{Name: "JPY/USD", Symbol: "jpyusd"},
-		{Name: "RMB/USD", Symbol: "cnhusd"},
 	}
+	macroGold := StockSnapshot{Name: "Gold/USD", Symbol: "xauusd"}
 
 	for i, index := range indices {
 		snapshot, err := fetchIndexSnapshot(index)
@@ -147,6 +163,11 @@ func main() {
 		}
 		stocks[i] = snapshot
 	}
+	if snapshot, err := fetchStockSnapshot(macroGold); err == nil {
+		macroGold = snapshot
+	} else {
+		macroGold.HasData = false
+	}
 
 	tickers, err := loadSP500Tickers(http.Client{Timeout: 60 * time.Second})
 	if err != nil {
@@ -154,10 +175,6 @@ func main() {
 		os.Exit(1)
 	}
 	stockSignals := scanTrendRiderSignals(tickers)
-	if len(stockSignals) > 0 {
-		enriched := fetchAdditionalSnapshots(stocks, stockSignals)
-		stocks = append(stocks, enriched...)
-	}
 
 	fearGreed, err := fetchFearGreed()
 	if err != nil {
@@ -206,12 +223,20 @@ func main() {
 	}
 	defer file.Close()
 
+	predefined := make([]PredefinedItem, 0, len(stocks)+len(coins))
+	for _, stock := range stocks {
+		predefined = append(predefined, predefinedFromStock(stock))
+	}
+	for _, coin := range coins {
+		predefined = append(predefined, predefinedFromCoin(coin))
+	}
+
 	indexData := PageData{
 		GeneratedAt:    time.Now().Format("2006-01-02 15:04 MST"),
-		Coins:          coins,
 		Indices:        indices,
 		FearGreed:      fearGreed,
-		Stocks:         stocks,
+		Predefined:     predefined,
+		MacroGold:      macroGold,
 		Signals:        stockSignals,
 		SignalsScanned: len(tickers),
 		History:        indexHistoryEntries,
@@ -269,12 +294,16 @@ func fetchCoins() ([]Coin, error) {
 		if err != nil || len(history) < 50 {
 			continue
 		}
+		macd, signalLine, _, _ := macdIndicator(history, 12, 26, 9)
 		ema20 := exponentialMovingAverage(history, 20)
 		ema50 := exponentialMovingAverage(history, 50)
 		coins[i].EMA20 = ema20
 		coins[i].EMA50 = ema50
 		coins[i].EMABullish = ema20 > ema50
 		coins[i].ChangePct = dailyChangePct(history)
+		coins[i].MACD = macd
+		coins[i].Signal = signalLine
+		coins[i].HasIndicators = true
 	}
 
 	return coins, nil
@@ -455,13 +484,14 @@ func fetchTrendRiderSignal(client http.Client, ticker string) (StockSignal, bool
 	prevEMA20 := exponentialMovingAverage(prices[:len(prices)-1], 20)
 	prevEMA50 := exponentialMovingAverage(prices[:len(prices)-1], 50)
 
-	buy := prevEMA20 <= prevEMA50 && ema20 > ema50 && close > ema50
-	sell := close < ema50
+	macd, signalLine, _, _ := macdIndicator(prices, 12, 26, 9)
+
+	buy := prevEMA20 <= prevEMA50 && ema20 > ema50 && close > ema20
+	sell := prevEMA20 >= prevEMA50 && ema20 < ema50 && close > ema20
 	if !buy && !sell {
 		return StockSignal{}, false, nil
 	}
 
-	macd, signalLine, _, _ := macdIndicator(prices, 12, 26, 9)
 	macdBullish := macd > signalLine
 
 	signal := "SELL"
@@ -763,6 +793,42 @@ func formatPrice(value float64) string {
 	return fmt.Sprintf("%.2f", value)
 }
 
+func predefinedFromStock(stock StockSnapshot) PredefinedItem {
+	return PredefinedItem{
+		Name:          stock.Name,
+		Symbol:        stock.Symbol,
+		HasData:       stock.HasData,
+		HasIndicators: stock.HasData,
+		Close:         stock.Close,
+		ChangePct:     stock.ChangePct,
+		EMA20:         stock.EMA20,
+		EMA50:         stock.EMA50,
+		EMABullish:    stock.EMABullish,
+		MACD:          stock.MACD,
+		Signal:        stock.Signal,
+	}
+}
+
+func predefinedFromCoin(coin Coin) PredefinedItem {
+	name := coin.Name
+	if name == "" {
+		name = strings.ToUpper(coin.Symbol)
+	}
+	return PredefinedItem{
+		Name:          name,
+		Symbol:        strings.ToUpper(coin.Symbol),
+		HasData:       coin.CurrentPrice > 0,
+		HasIndicators: coin.EMA20 != 0 && coin.EMA50 != 0,
+		Close:         coin.CurrentPrice,
+		ChangePct:     coin.ChangePct,
+		EMA20:         coin.EMA20,
+		EMA50:         coin.EMA50,
+		EMABullish:    coin.EMABullish,
+		MACD:          coin.MACD,
+		Signal:        coin.Signal,
+	}
+}
+
 func fetchFearGreed() (FearGreedSnapshot, error) {
 	apiKey := strings.TrimSpace(os.Getenv("COINMARKETCAP_API_KEY"))
 	if apiKey == "" {
@@ -936,7 +1002,7 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
     </header>
     <main>
       <section>
-        <div class="section-title">US Indices</div>
+        <div class="section-title">Macro</div>
         <div class="grid">
           {{range .Indices}}
           <article class="card">
@@ -949,25 +1015,53 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
             <div class="badge {{if .EMABullish}}bullish{{else}}bearish{{end}}">EMA20 {{if .EMABullish}}Above{{else}}Below{{end}} EMA50</div>
           </article>
           {{end}}
+          <article class="card fear-card">
+            <div class="symbol">Crypto Fear&amp;Greed Index</div>
+            <div class="fear-value">{{.FearGreed.Value}}</div>
+            <div class="fear-label">{{.FearGreed.Category}}</div>
+            {{if .FearGreed.UpdatedAt}}
+            <div class="metric">Updated {{.FearGreed.UpdatedAt}}</div>
+            {{end}}
+          </article>
+          <article class="card">
+            <div class="symbol">{{.MacroGold.Symbol}}</div>
+            <h2>{{.MacroGold.Name}}</h2>
+            {{if .MacroGold.HasData}}
+            <div class="price">${{formatPrice .MacroGold.Close}}</div>
+            <div class="change">Last {{printf "%.2f" .MacroGold.ChangePct}}%</div>
+            <div class="badge {{if .MacroGold.EMABullish}}bullish{{else}}bearish{{end}}">EMA20 {{if .MacroGold.EMABullish}}Above{{else}}Below{{end}} EMA50</div>
+            <div class="stock-metrics">
+              <span>EMA20 ${{printf "%.2f" .MacroGold.EMA20}}</span>
+              <span>EMA50 ${{printf "%.2f" .MacroGold.EMA50}}</span>
+              <div>MACD {{printf "%.2f" .MacroGold.MACD}}</div>
+              <div>Signal {{printf "%.2f" .MacroGold.Signal}}</div>
+            </div>
+            {{else}}
+            <div class="price">N/A</div>
+            <div class="metric">No price data available.</div>
+            {{end}}
+          </article>
         </div>
       </section>
       <section>
         <div class="section-title">Predefined</div>
         <div class="grid">
-          {{range .Stocks}}
+          {{range .Predefined}}
           <article class="card">
             <div class="symbol">{{.Symbol}}</div>
             <h2>{{.Name}}</h2>
             {{if .HasData}}
             <div class="price">${{formatPrice .Close}}</div>
             <div class="change">Last {{printf "%.2f" .ChangePct}}%</div>
+            {{if .HasIndicators}}
             <div class="badge {{if .EMABullish}}bullish{{else}}bearish{{end}}">EMA20 {{if .EMABullish}}Above{{else}}Below{{end}} EMA50</div>
             <div class="stock-metrics">
               <span>EMA20 ${{printf "%.2f" .EMA20}}</span>
               <span>EMA50 ${{printf "%.2f" .EMA50}}</span>
-              <span>MACD {{printf "%.2f" .MACD}}</span>
-              <span>Signal {{printf "%.2f" .Signal}}</span>
+              <div>MACD {{printf "%.2f" .MACD}}</div>
+              <div>Signal {{printf "%.2f" .Signal}}</div>
             </div>
+            {{end}}
             {{else}}
             <div class="price">N/A</div>
             <div class="metric">No price data available.</div>
@@ -977,7 +1071,7 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
         </div>
       </section>
       <section>
-        <div class="section-title">Auto Screener</div>
+        <div class="section-title">Screener</div>
         <div class="metric">Scanned {{.SignalsScanned}} tickers • Last scan {{.GeneratedAt}}</div>
         <div class="grid">
           {{if .Signals}}
@@ -992,8 +1086,8 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
             <div class="stock-metrics">
               <span>EMA20 ${{printf "%.2f" .EMA20}}</span>
               <span>EMA50 ${{printf "%.2f" .EMA50}}</span>
-              <span>MACD {{printf "%.2f" .MACD}}</span>
-              <span>Signal {{printf "%.2f" .SignalLine}}</span>
+              <div>MACD {{printf "%.2f" .MACD}}</div>
+              <div>Signal {{printf "%.2f" .SignalLine}}</div>
             </div>
           </article>
           {{end}}
@@ -1002,38 +1096,6 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
             <div class="symbol">No signals today</div>
             <h2>Scan complete</h2>
             <div class="metric">No buy or sell triggers met the criteria.</div>
-          </article>
-          {{end}}
-        </div>
-      </section>
-      <section>
-        <div class="section-title">Fear &amp; Greed Index</div>
-        <div class="grid">
-          <article class="card fear-card">
-            <div class="symbol">Market Sentiment</div>
-            <div class="fear-value">{{.FearGreed.Value}}</div>
-            <div class="fear-label">{{.FearGreed.Category}}</div>
-            {{if .FearGreed.UpdatedAt}}
-            <div class="metric">Updated {{.FearGreed.UpdatedAt}}</div>
-            {{end}}
-          </article>
-        </div>
-      </section>
-      <section>
-        <div class="section-title">Crypto Snapshot</div>
-        <div class="grid">
-          {{range .Coins}}
-          <article class="card">
-            <div class="symbol">{{.Symbol}}</div>
-            <h2>{{.Name}}</h2>
-            <div class="price">${{printf "%.2f" .CurrentPrice}}</div>
-            <div class="change">24h {{printf "%.2f" .PriceChangePercentage24h}}%</div>
-            <div class="change">Last {{printf "%.2f" .ChangePct}}%</div>
-            {{if .EMA20}}
-            <div class="metric">EMA20: ${{printf "%.2f" .EMA20}}</div>
-            <div class="metric">EMA50: ${{printf "%.2f" .EMA50}}</div>
-            <div class="badge {{if .EMABullish}}bullish{{else}}bearish{{end}}">EMA20 {{if .EMABullish}}Above{{else}}Below{{end}} EMA50</div>
-            {{end}}
           </article>
           {{end}}
         </div>
