@@ -153,17 +153,9 @@ func main() {
 		fmt.Fprintf(os.Stderr, "load S&P 500 tickers: %v\n", err)
 		os.Exit(1)
 	}
-	stockSignals, err := scanTrendRiderSignals(tickers)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "scan signals: %v\n", err)
-		stockSignals = nil
-	}
+	stockSignals := scanTrendRiderSignals(tickers)
 	if len(stockSignals) > 0 {
-		enriched, err := fetchAdditionalSnapshots(stocks, stockSignals)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "fetch signal stocks: %v\n", err)
-			os.Exit(1)
-		}
+		enriched := fetchAdditionalSnapshots(stocks, stockSignals)
 		stocks = append(stocks, enriched...)
 	}
 
@@ -381,7 +373,7 @@ func fetchStooqHistory(symbol string) ([]float64, error) {
 	return prices, nil
 }
 
-func scanTrendRiderSignals(tickers []string) ([]StockSignal, error) {
+func scanTrendRiderSignals(tickers []string) []StockSignal {
 	client := http.Client{Timeout: 60 * time.Second}
 	workerLimit := 4
 	if len(tickers) < workerLimit {
@@ -421,13 +413,17 @@ func scanTrendRiderSignals(tickers []string) ([]StockSignal, error) {
 	close(results)
 	close(resultErrors)
 
-	if len(resultErrors) > 0 {
-		return nil, <-resultErrors
-	}
-
 	var signals []StockSignal
 	for signal := range results {
 		signals = append(signals, signal)
+	}
+
+	errorCount := len(resultErrors)
+	if errorCount > 0 {
+		fmt.Fprintf(os.Stderr, "Warning: %d stocks encountered errors during screening (skipped)\n", errorCount)
+		for err := range resultErrors {
+			fmt.Fprintf(os.Stderr, "  - %v\n", err)
+		}
 	}
 
 	sort.Slice(signals, func(i, j int) bool {
@@ -441,7 +437,7 @@ func scanTrendRiderSignals(tickers []string) ([]StockSignal, error) {
 		fmt.Printf("%s | Signal: %s | Close: $%.2f | EMA20: $%.2f | EMA50: $%.2f\n", signal.Ticker, signal.Signal, signal.Close, signal.EMA20, signal.EMA50)
 	}
 
-	return signals, nil
+	return signals
 }
 
 func fetchTrendRiderSignal(client http.Client, ticker string) (StockSignal, bool, error) {
@@ -643,9 +639,9 @@ func stripHTML(value string) string {
 	return strings.TrimSpace(builder.String())
 }
 
-func fetchAdditionalSnapshots(existing []StockSnapshot, signals []StockSignal) ([]StockSnapshot, error) {
+func fetchAdditionalSnapshots(existing []StockSnapshot, signals []StockSignal) []StockSnapshot {
 	if len(signals) == 0 {
-		return nil, nil
+		return nil
 	}
 
 	existingSymbols := make(map[string]struct{}, len(existing))
@@ -661,12 +657,13 @@ func fetchAdditionalSnapshots(existing []StockSnapshot, signals []StockSignal) (
 		}
 		snapshot, err := fetchStockSnapshot(StockSnapshot{Name: signal.Ticker, Symbol: symbol})
 		if err != nil {
-			return nil, err
+			fmt.Fprintf(os.Stderr, "Warning: skipping %s: %v\n", signal.Ticker, err)
+			continue
 		}
 		additional = append(additional, snapshot)
 	}
 
-	return additional, nil
+	return additional
 }
 
 func simpleMovingAverage(prices []float64, period int) float64 {
