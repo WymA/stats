@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Daily market dashboard from Wym with S&P 500, Nasdaq 100, Bitcoin, Ethereum, and 20/50 Trend Rider signals for US stocks." />
+    <meta name="keywords" content="Wym, daily investment snapshot, market dashboard, S&P 500, Nasdaq 100, Bitcoin, Ethereum, trend rider, SMA20, SMA50, buy signal, sell signal" />
+    <link rel="icon" href="../assets/favicon.ico" />
+    <title>Wym Stats</title>
+    <!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-JNZQWSY5VP"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+
+	gtag('config', 'G-JNZQWSY5VP');
+	</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="../assets/style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="toolbar">
+        <a class="icon-button" href="https://stats.matthias2wym.com/" aria-label="Home">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M3 10.5 12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5H15v-6h-6v6H4.5A1.5 1.5 0 0 1 3 19.5v-9z" fill="currentColor" />
+          </svg>
+          <span class="sr-only">Home</span>
+        </a>
+        <div class="toolbar-actions">
+          <details class="history-menu">
+            <summary class="icon-button" aria-label="History">
+              <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+              <span class="sr-only">History</span>
+            </summary>
+            <div class="history-list">
+              
+              <a href="20260130.html">2026-01-30</a>
+              
+              <a href="20260129.html">2026-01-29</a>
+              
+              <a href="20260128.html">2026-01-28</a>
+              
+              <a href="20260127.html">2026-01-27</a>
+              
+              <a href="20260126.html">2026-01-26</a>
+              
+            </div>
+          </details>
+          <button id="theme-toggle" class="icon-button" type="button" aria-label="Toggle theme">
+            <i class="fa-regular fa-moon" aria-hidden="true"></i>
+            <span class="sr-only">Theme</span>
+          </button>
+        </div>
+      </div>
+      <h1>Wym Stats</h1>
+      <p>Generated 2026-01-30 02:21 UTC</p>
+    </header>
+    <main>
+      <section>
+        <div class="section-title">Macro</div>
+        <div class="grid">
+          
+          <article class="card">
+            <div class="symbol">^SPX</div>
+            <h2>S&amp;P 500</h2>
+            <div class="price">$6969.01</div>
+            <div class="change">Last -0.13%</div>
+            <div class="metric">EMA20: $6922.68</div>
+            <div class="metric">EMA50: $6864.27</div>
+            <div class="badge bullish">EMA20 Above EMA50</div>
+          </article>
+          
+          <article class="card">
+            <div class="symbol">^NDX</div>
+            <h2>Nasdaq 100</h2>
+            <div class="price">$25884.29</div>
+            <div class="change">Last -0.53%</div>
+            <div class="metric">EMA20: $25610.82</div>
+            <div class="metric">EMA50: $25410.76</div>
+            <div class="badge bullish">EMA20 Above EMA50</div>
+          </article>
+          
+          <article class="card fear-card">
+            <div class="symbol">Crypto Fear&amp;Greed Index</div>
+            <div class="fear-value">38</div>
+            <div class="fear-label">Fear</div>
+            
+          </article>
+          <article class="card">
+            <div class="symbol">xauusd</div>
+            <h2>Gold/USD</h2>
+            
+            <div class="price">$5154.10</div>
+            <div class="change">Last -4.18%</div>
+            <div class="badge bullish">EMA20 Above EMA50</div>
+            <div class="stock-metrics">
+              <span>EMA20 $4863.36</span>
+              <span>EMA50 $4556.47</span>
+              <div>MACD 233.15</div>
+              <div>Signal 181.17</div>
+            </div>
+            
+          </article>
+        </div>
+      </section>
+      <section>
+        <div class="section-title">Predefined</div>
+        <div class="grid">
+          
+          <article class="card">
+            <div class="symbol">tsla.us</div>
+            <h2>Tesla</h2>
+            
+            <div class="price">$416.35</div>
+            <div class="change">Last -3.50%</div>
+            
+            <div class="badge bearish">EMA20 Below EMA50</div>
+            <div class="stock-metrics">
+              <span>EMA20 $439.03</span>
+              <span>EMA50 $440.48</span>
+              <div>MACD -5.95</div>
+              <div>Signal -4.07</div>
+            </div>
+            
+            
+          </article>
+          
+          <article class="card">
+            <div class="symbol">goog.us</div>
+            <h2>Alphabet</h2>
+            
+            <div class="price">$338.66</div>
+            <div class="change">Last 0.71%</div>
+            
+            <div class="badge bullish">EMA20 Above EMA50</div>
+            <div class="stock-metrics">
+              <span>EMA20 $328.25</span>
+              <span>EMA50 $314.00</span>
+              <div>MACD 6.10</div>
+              <div>Signal 5.99</div>
+            </div>
+            
+            
+          </article>
+          
+          <article class="card">
+            <div class="symbol">nvda.us</div>
+            <h2>NVIDIA</h2>
+            
+            <div class="price">$192.43</div>
+            <div class="change">Last 0.48%</div>
+            
+            <div class="badge bullish">EMA20 Above EMA50</div>
+            <div class="stock-metrics">
+              <span>EMA20 $186.58</span>
+              <span>EMA50 $185.27</span>
+              <div>MACD 1.32</div>
+              <div>Signal 0.61</div>
+            </div>
+            
+            
+          </article>
+          
+          <article class="card">
+            <div class="symbol">amd.us</div>
+            <h2>AMD</h2>
+            
+            <div class="price">$252.18</div>
+            <div class="change">Last -0.22%</div>
+            
+            <div class="badge bullish">EMA20 Above EMA50</div>
+            <div class="stock-metrics">
+              <span>EMA20 $236.04</span>
+              <span>EMA50 $225.72</span>
+              <div>MACD 10.17</div>
+              <div>Signal 7.14</div>
+            </div>
+            
+            
+          </article>
+          
+          <article class="card">
+            <div class="symbol">msft.us</div>
+            <h2>Microsoft</h2>
+            
+            <div class="price">$433.48</div>
+            <div class="change">Last -10.00%</div>
+            
+            <div class="badge bearish">EMA20 Below EMA50</div>
+            <div class="stock-metrics">
+              <span>EMA20 $467.17</span>
+              <span>EMA50 $478.15</span>
+              <div>MACD -6.18</div>
+              <div>Signal -5.99</div>
+            </div>
+            
+            
+          </article>
+          
+          <article class="card">
+            <div class="symbol">amzn.us</div>
+            <h2>Amazon</h2>
+            
+            <div class="price">$241.73</div>
+            <div class="change">Last -0.53%</div>
+            
+            <div class="badge bullish">EMA20 Above EMA50</div>
+            <div class="stock-metrics">
+              <span>EMA20 $237.99</span>
+              <span>EMA50 $234.61</span>
+              <div>MACD 2.22</div>
+              <div>Signal 2.01</div>
+            </div>
+            
+            
+          </article>
+          
+          <article class="card">
+            <div class="symbol">oxy.us</div>
+            <h2>Occidental Petroleum</h2>
+            
+            <div class="price">$45.42</div>
+            <div class="change">Last 1.32%</div>
+            
+            <div class="badge bullish">EMA20 Above EMA50</div>
+            <div class="stock-metrics">
+              <span>EMA20 $43.24</span>
+              <span>EMA50 $42.51</span>
+              <div>MACD 0.88</div>
+              <div>Signal 0.65</div>
+            </div>
+            
+            
+          </article>
+          
+          <article class="card">
+            <div class="symbol">ko.us</div>
+            <h2>Coca-Cola</h2>
+            
+            <div class="price">$73.44</div>
+            <div class="change">Last 0.52%</div>
+            
+            <div class="badge bullish">EMA20 Above EMA50</div>
+            <div class="stock-metrics">
+              <span>EMA20 $71.57</span>
+              <span>EMA50 $70.73</span>
+              <div>MACD 0.84</div>
+              <div>Signal 0.52</div>
+            </div>
+            
+            
+          </article>
+          
+          <article class="card">
+            <div class="symbol">pdd.us</div>
+            <h2>PDD Holdings</h2>
+            
+            <div class="price">$102.73</div>
+            <div class="change">Last -0.08%</div>
+            
+            <div class="badge bearish">EMA20 Below EMA50</div>
+            <div class="stock-metrics">
+              <span>EMA20 $109.16</span>
+              <span>EMA50 $114.08</span>
+              <div>MACD -3.27</div>
+              <div>Signal -2.57</div>
+            </div>
+            
+            
+          </article>
+          
+          <article class="card">
+            <div class="symbol">jpyusd</div>
+            <h2>JPY/USD</h2>
+            
+            <div class="price">$0.00650</div>
+            <div class="change">Last -0.54%</div>
+            
+            <div class="badge bearish">EMA20 Below EMA50</div>
+            <div class="stock-metrics">
+              <span>EMA20 $0.01</span>
+              <span>EMA50 $0.01</span>
+              <div>MACD 0.00</div>
+              <div>Signal 0.00</div>
+            </div>
+            
+            
+          </article>
+          
+          <article class="card">
+            <div class="symbol">BTC</div>
+            <h2>Bitcoin</h2>
+            
+            <div class="price">$81708.00</div>
+            <div class="change">Last -8.45%</div>
+            
+            <div class="badge bearish">EMA20 Below EMA50</div>
+            <div class="stock-metrics">
+              <span>EMA20 $89454.44</span>
+              <span>EMA50 $90886.11</span>
+              <div>MACD -1264.19</div>
+              <div>Signal -396.57</div>
+            </div>
+            
+            
+          </article>
+          
+          <article class="card">
+            <div class="symbol">ETH</div>
+            <h2>Ethereum</h2>
+            
+            <div class="price">$2723.37</div>
+            <div class="change">Last -9.48%</div>
+            
+            <div class="badge bearish">EMA20 Below EMA50</div>
+            <div class="stock-metrics">
+              <span>EMA20 $3015.88</span>
+              <span>EMA50 $3084.90</span>
+              <div>MACD -63.25</div>
+              <div>Signal -29.67</div>
+            </div>
+            
+            
+          </article>
+          
+        </div>
+      </section>
+      <section>
+        <div class="section-title">Screener</div>
+        <div class="metric">Scanned 795 tickers • Last scan 2026-01-30 02:21 UTC</div>
+        <div class="grid">
+          
+          
+          <article class="card bullish">
+            <div class="symbol">DLR</div>
+            <h2>BUY</h2>
+            <div class="price">$167.44</div>
+            <div class="change">Last 2.59%</div>
+            <div class="badge bullish">EMA20 Above EMA50</div>
+            <div class="badge bullish">MACD Bullish</div>
+            <div class="stock-metrics">
+              <span>EMA20 $160.08</span>
+              <span>EMA50 $160.00</span>
+              <div>MACD 1.80</div>
+              <div>Signal 0.94</div>
+            </div>
+          </article>
+          
+          <article class="card bullish">
+            <div class="symbol">EOG</div>
+            <h2>BUY</h2>
+            <div class="price">$112.08</div>
+            <div class="change">Last 0.95%</div>
+            <div class="badge bullish">EMA20 Above EMA50</div>
+            <div class="badge bullish">MACD Bullish</div>
+            <div class="stock-metrics">
+              <span>EMA20 $107.71</span>
+              <span>EMA50 $107.57</span>
+              <div>MACD 1.01</div>
+              <div>Signal 0.41</div>
+            </div>
+          </article>
+          
+          <article class="card bullish">
+            <div class="symbol">IBM</div>
+            <h2>BUY</h2>
+            <div class="price">$309.24</div>
+            <div class="change">Last 5.13%</div>
+            <div class="badge bullish">EMA20 Above EMA50</div>
+            <div class="badge bullish">MACD Bullish</div>
+            <div class="stock-metrics">
+              <span>EMA20 $299.71</span>
+              <span>EMA50 $299.15</span>
+              <div>MACD -1.10</div>
+              <div>Signal -1.36</div>
+            </div>
+          </article>
+          
+          <article class="card bullish">
+            <div class="symbol">JCI</div>
+            <h2>BUY</h2>
+            <div class="price">$120.28</div>
+            <div class="change">Last 3.03%</div>
+            <div class="badge bullish">EMA20 Above EMA50</div>
+            <div class="badge bullish">MACD Bullish</div>
+            <div class="stock-metrics">
+              <span>EMA20 $115.82</span>
+              <span>EMA50 $115.56</span>
+              <div>MACD 0.09</div>
+              <div>Signal -0.53</div>
+            </div>
+          </article>
+          
+          <article class="card bullish">
+            <div class="symbol">PEP</div>
+            <h2>BUY</h2>
+            <div class="price">$148.69</div>
+            <div class="change">Last 0.13%</div>
+            <div class="badge bullish">EMA20 Above EMA50</div>
+            <div class="badge bullish">MACD Bullish</div>
+            <div class="stock-metrics">
+              <span>EMA20 $145.66</span>
+              <span>EMA50 $145.57</span>
+              <div>MACD 0.80</div>
+              <div>Signal 0.10</div>
+            </div>
+          </article>
+          
+          <article class="card bullish">
+            <div class="symbol">SJM</div>
+            <h2>BUY</h2>
+            <div class="price">$103.48</div>
+            <div class="change">Last 0.12%</div>
+            <div class="badge bullish">EMA20 Above EMA50</div>
+            <div class="badge bullish">MACD Bullish</div>
+            <div class="stock-metrics">
+              <span>EMA20 $101.96</span>
+              <span>EMA50 $101.93</span>
+              <div>MACD 0.98</div>
+              <div>Signal 0.61</div>
+            </div>
+          </article>
+          
+          <article class="card bullish">
+            <div class="symbol">WEC</div>
+            <h2>BUY</h2>
+            <div class="price">$110.41</div>
+            <div class="change">Last 0.34%</div>
+            <div class="badge bullish">EMA20 Above EMA50</div>
+            <div class="badge bullish">MACD Bullish</div>
+            <div class="stock-metrics">
+              <span>EMA20 $108.21</span>
+              <span>EMA50 $108.08</span>
+              <div>MACD 0.99</div>
+              <div>Signal 0.56</div>
+            </div>
+          </article>
+          
+          
+        </div>
+      </section>
+      <footer>
+        <p>Data sources: CoinGecko, Stooq, CoinMarketCap, Yahoo Finance</p>
+        <p>All rights reserved 2026</p>
+      </footer>
+    </main>
+    <script src="../assets/app.js"></script>
+  </body>
+</html>
