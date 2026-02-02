@@ -1006,7 +1006,12 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
         <div class="grid">
           {{range .Indices}}
           <article class="card">
-            <div class="symbol">{{.Symbol}}</div>
+            <div class="symbol-row">
+              <div class="symbol">{{.Symbol}}</div>
+              <button class="copy-button" type="button" data-copy="{{.Symbol}}" aria-label="Copy {{.Symbol}} code">
+                <i class="fa-regular fa-copy" aria-hidden="true"></i>
+              </button>
+            </div>
             <h2>{{.Name}}</h2>
             <div class="price">${{printf "%.2f" .Close}}</div>
             <div class="change">Last {{printf "%.2f" .ChangePct}}%</div>
@@ -1024,7 +1029,12 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
             {{end}}
           </article>
           <article class="card">
-            <div class="symbol">{{.MacroGold.Symbol}}</div>
+            <div class="symbol-row">
+              <div class="symbol">{{.MacroGold.Symbol}}</div>
+              <button class="copy-button" type="button" data-copy="{{.MacroGold.Symbol}}" aria-label="Copy {{.MacroGold.Symbol}} code">
+                <i class="fa-regular fa-copy" aria-hidden="true"></i>
+              </button>
+            </div>
             <h2>{{.MacroGold.Name}}</h2>
             {{if .MacroGold.HasData}}
             <div class="price">${{formatPrice .MacroGold.Close}}</div>
@@ -1048,7 +1058,12 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
         <div class="grid">
           {{range .Predefined}}
           <article class="card">
-            <div class="symbol">{{.Symbol}}</div>
+            <div class="symbol-row">
+              <div class="symbol">{{.Symbol}}</div>
+              <button class="copy-button" type="button" data-copy="{{.Symbol}}" aria-label="Copy {{.Symbol}} code">
+                <i class="fa-regular fa-copy" aria-hidden="true"></i>
+              </button>
+            </div>
             <h2>{{.Name}}</h2>
             {{if .HasData}}
             <div class="price">${{formatPrice .Close}}</div>
@@ -1076,13 +1091,23 @@ var pageTemplate = template.Must(template.New("dashboard").Funcs(template.FuncMa
         <div class="grid">
           {{if .Signals}}
           {{range .Signals}}
-          <article class="card {{if .IsBuy}}bullish{{else}}bearish{{end}}">
-            <div class="symbol">{{.Ticker}}</div>
-            <h2>{{.Signal}}</h2>
+          <article class="card screener-card {{if .IsBuy}}bullish{{else}}bearish{{end}}">
+            <div class="screener-header">
+              <div class="screener-symbol">
+                <div class="symbol">{{.Ticker}}</div>
+                <button class="copy-button" type="button" data-copy="{{.Ticker}}" aria-label="Copy {{.Ticker}} code">
+                  <i class="fa-regular fa-copy" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="signal-pill {{if .IsBuy}}bullish{{else}}bearish{{end}}">{{.Signal}}</div>
+            </div>
             <div class="price">${{printf "%.2f" .Close}}</div>
             <div class="change">Last {{printf "%.2f" .ChangePct}}%</div>
             <div class="badge {{if .EMABullish}}bullish{{else}}bearish{{end}}">EMA20 {{if .EMABullish}}Above{{else}}Below{{end}} EMA50</div>
             <div class="badge {{if .MACDBullish}}bullish{{else}}bearish{{end}}">MACD {{if .MACDBullish}}Bullish{{else}}Bearish{{end}}</div>
+            {{if not .IsBuy}}
+            <div class="badge bearish">Reverse</div>
+            {{end}}
             <div class="stock-metrics">
               <span>EMA20 ${{printf "%.2f" .EMA20}}</span>
               <span>EMA50 ${{printf "%.2f" .EMA50}}</span>

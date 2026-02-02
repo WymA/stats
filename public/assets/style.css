@@ -168,6 +168,39 @@ section {
   margin: 0 0 4px;
   font-size: 1.2rem;
 }
+.screener-card .screener-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.screener-card .symbol {
+  font-size: 1rem;
+  letter-spacing: 0.14em;
+  color: var(--ink);
+  font-weight: 700;
+}
+.screener-card .signal-pill {
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.screener-card .signal-pill.bullish {
+  background: var(--bullish-soft);
+  color: var(--bullish);
+  border-color: rgba(22, 163, 74, 0.25);
+}
+.screener-card .signal-pill.bearish {
+  background: var(--bearish-soft);
+  color: var(--bearish);
+  border-color: rgba(220, 38, 38, 0.2);
+}
 .metric {
   font-size: 0.95rem;
   color: var(--muted);
@@ -178,6 +211,37 @@ section {
   font-size: 0.8rem;
   color: var(--muted);
   letter-spacing: 0.08em;
+}
+.symbol-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.copy-button {
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--muted);
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+.copy-button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.copy-button.copied {
+  border-color: var(--bullish);
+  color: var(--bullish);
+}
+.screener-symbol {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 .price {
   margin: 16px 0 8px;
